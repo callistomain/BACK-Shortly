@@ -54,3 +54,29 @@ export async function openUrl (req, res) {
     res.sendStatus(500);
   }
 };
+
+export async function deleteUrlById (req, res) {
+  const { id } = req.params;
+  const { token } = res.locals;
+
+  try {
+    const urlFound = await connection.query(`SELECT * FROM urls WHERE id=$1`, [id]);
+    if (urlFound.rowCount === 0) return res.sendStatus(404);
+    const url = urlFound.rows[0];
+
+    const queryUser = await connection.query(`
+      SELECT u.* FROM users AS u
+      JOIN sessions AS s ON u.id = s.user_id
+      WHERE s.token = $1
+    `, [token]);
+    const user = queryUser.rows[0];
+
+    if (url.user_id !== user.id) return res.sendStatus(401);
+
+    await connection.query(`DELETE FROM urls WHERE id=$1`, [id])
+    res.sendStatus(204);
+  } catch (err) {
+    console.log(err.message);
+    res.sendStatus(500);
+  }
+};
