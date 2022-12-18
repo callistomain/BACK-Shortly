@@ -25,3 +25,16 @@ export async function shorten (req, res) {
     res.sendStatus(500);
   }
 };
+
+export async function getUrlById (req, res) {
+  const { id } = req.params;
+
+  try {
+    const urlFound = await connection.query(`SELECT id, "shortUrl", url FROM urls WHERE id=$1`, [id]);
+    if (urlFound.rowCount === 0) return res.sendStatus(404);
+    res.send(urlFound.rows[0]).status(200);
+  } catch (err) {
+    console.log(err.message);
+    res.sendStatus(500);
+  }
+};
