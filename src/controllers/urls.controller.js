@@ -38,3 +38,19 @@ export async function getUrlById (req, res) {
     res.sendStatus(500);
   }
 };
+
+export async function openUrl (req, res) {
+  const { shortUrl } = req.params;
+
+  try {
+    const urlFound = await connection.query(`SELECT * FROM urls WHERE "shortUrl"=$1`, [shortUrl]);
+    if (urlFound.rowCount === 0) return res.sendStatus(404);
+
+    const url = urlFound.rows[0];
+    await connection.query(`UPDATE urls SET "visitCount"=$1 WHERE id=$2`, [url.visitCount+1, url.id])
+    res.redirect(url.url);
+  } catch (err) {
+    console.log(err.message);
+    res.sendStatus(500);
+  }
+};
