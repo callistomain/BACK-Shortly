@@ -5,14 +5,11 @@ export async function userInfo (req, res) {
 
   try {
     const query = await connection.query(`
-      SELECT us.id, us.name, SUM(ur."visitCount")::INT AS "visitCount",
-      ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(au))) AS "shortenedUrls"
+      SELECT us.id, us.name, SUM(ur."visitCount") AS "visitCount",
+      JSON_AGG(JSON_BUILD_OBJECT('id', ur.id, 'shortUrl', ur."shortUrl", 'url', ur.url, 'visitCount', ur."visitCount")) AS "shortenedUrls"
       FROM users AS us
-      JOIN sessions AS s ON us.id = s.user_id
       JOIN urls AS ur ON us.id = ur.user_id
-      JOIN 
-        (SELECT id, "shortUrl", url, "visitCount" FROM urls ORDER BY "createAt")
-        AS au ON ur.id = au.id
+      JOIN sessions AS s ON us.id = s.user_id
       WHERE s.token = $1
       GROUP BY us.id
     `, [token]); 
