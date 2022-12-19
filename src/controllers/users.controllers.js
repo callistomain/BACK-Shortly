@@ -1,29 +1,4 @@
 import { connection } from "../database/database.js";
-/*
-{
-  "id": id do usuário,
-	"name": nome do usuário,
-	"visitCount": soma da quantidade de visitas de todos os links do usuário,
-	"shortenedUrls": [
-		{
-			"id": 1,
-			"shortUrl": "...",
-			"url": "...",
-			"visitCount": soma da quantidade de visitas do link
-		},
-		{
-			"id": 2,
-			"shortUrl": "...",
-			"url": "...",
-			"visitCount": soma da quantidade de visitas do link
-		}
-	]
-}
-*/
-
-await connection.query(`
-
-`);
 
 export async function userInfo (req, res) {
   const { token } = res.locals;

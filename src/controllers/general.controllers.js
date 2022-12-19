@@ -1,17 +1,6 @@
 import { connection } from "../database/database.js";
 
-/*
-[
-	{
-		"id": id do usuário,
-		"name": nome do usuário,
-		"linksCount": 5,
-		"visitCount": 100000
-	},
-*/
-
 export async function ranking (req, res) {
-
   try {
     const ranking = await connection.query(`
       SELECT us.id, us.name, COUNT(ur.id) AS "linksCount", SUM(ur."visitCount") AS "visitCount"
